@@ -37,3 +37,22 @@ void MainWindow::on_commandLinkButton_clicked()
     }
 }
 
+
+void MainWindow::on_commandLinkButton_2_clicked()
+{
+    double c = 0;
+    double a = ui->inputNumberEdit_4->text().toDouble();
+    double b = ui->inputNumberEdit_5->text().toDouble();
+    double gradOrRad = ui->inputNumberEdit_6->text().toDouble();
+    if(a <= 0 || b <= 0 || gradOrRad <= 0) ui->ResultSide->setText("Исходные значения не могут быть меньше или равны 0.");
+    else if(ui->GradSwitch->isChecked()) {
+        c = qSqrt(qPow(b,2)+qPow(a,2) - 2 * b * a * qCos(gradOrRad));
+        ui->ResultSide->setText(QString::number(c));
+    }
+    else if(ui->RadSwitch->isChecked()) {
+        c = qSqrt(qPow(b,2)+qPow(a,2) - (2 * b * a * gradOrRad));
+        ui->ResultSide->setText(QString::number(c));
+    }
+
+}
+

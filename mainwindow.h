@@ -18,6 +18,8 @@ public:
 private slots:
     void on_commandLinkButton_clicked();
 
+    void on_commandLinkButton_2_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
