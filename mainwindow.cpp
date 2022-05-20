@@ -56,3 +56,24 @@ void MainWindow::on_commandLinkButton_2_clicked()
 
 }
 
+
+void MainWindow::on_Concatenation_clicked()
+{
+    QString a = ui->FirstTextEdit->toPlainText();
+    ui->SecondTextEdit->insertPlainText(' ' + a);
+}
+
+
+void MainWindow::on_Change_clicked()
+{
+    QString b = ui->SecondTextEdit->toPlainText();
+    ui->FirstTextEdit->setPlainText(b);
+}
+
+
+void MainWindow::on_invertToHtml_clicked()
+{
+    if(ui->FirstWindow->isChecked()) ui->ThirdTextEdit->setHtml("<font color='blue'><b><i><s>" + ui->FirstTextEdit->toPlainText() + "</s></i></b></font>");
+    else if(ui->SecondWindow->isChecked()) ui->ThirdTextEdit->setHtml("<font color='green'><b><i><u>" + ui->SecondTextEdit->toPlainText() + "</u></i></b></font>");
+}
+

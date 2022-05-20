@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>749</width>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -128,7 +128,7 @@
    <widget class="QLineEdit" name="inputNumberEdit_3">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>440</x>
       <y>40</y>
       <width>113</width>
       <height>24</height>
@@ -138,7 +138,7 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>400</x>
       <y>40</y>
       <width>31</width>
       <height>16</height>
@@ -321,13 +321,160 @@
      <string>Искомая сторона</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>300</y>
+      <width>411</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Работа с текстом</string>
+    </property>
+   </widget>
+   <widget class="QCommandLinkButton" name="Concatenation">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>440</y>
+      <width>186</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Конкатенация</string>
+    </property>
+   </widget>
+   <widget class="QCommandLinkButton" name="Change">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>440</y>
+      <width>186</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Замена</string>
+    </property>
+   </widget>
+   <widget class="QCommandLinkButton" name="invertToHtml">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>440</y>
+      <width>186</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>В HTML</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="FirstWindow">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>350</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Первое окно</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="SecondWindow">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>420</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Второе окно</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ResultX1_5">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>320</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Первое окно</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ResultX1_6">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>320</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Второе окно</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ResultX1_7">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>320</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Третье окно</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="FirstTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>350</y>
+      <width>131</width>
+      <height>91</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="SecondTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>350</y>
+      <width>131</width>
+      <height>91</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="ThirdTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>350</y>
+      <width>131</width>
+      <height>91</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>749</width>
      <height>25</height>
     </rect>
    </property>
