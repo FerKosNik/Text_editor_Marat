@@ -17,10 +17,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_commandLinkButton_clicked()
 {
+    bool ok = false;
     double x1, x2;
-    double a = ui->inputNumberEdit->text().toDouble();
-    double b = ui->inputNumberEdit_2->text().toDouble();
-    double c = ui->inputNumberEdit_3->text().toDouble();
+    double a = ui->inputNumberEdit->text().toDouble(&ok);
+    double b = ui->inputNumberEdit_2->text().toDouble(&ok);
+    double c = ui->inputNumberEdit_3->text().toDouble(&ok);
     if(a == 0) ui->ResultSquare->setText("Нет корней, перемеенная 'a' не может быть равна 0.");
     double D = qPow(b,2) - 4 * a * c;
     if(D < 0) ui->ResultSquare->setText("Квадратное уравнение действительных корней не имеет.");
@@ -40,10 +41,11 @@ void MainWindow::on_commandLinkButton_clicked()
 
 void MainWindow::on_commandLinkButton_2_clicked()
 {
+    bool ok = false;
     double c = 0;
-    double a = ui->inputNumberEdit_4->text().toDouble();
-    double b = ui->inputNumberEdit_5->text().toDouble();
-    double gradOrRad = ui->inputNumberEdit_6->text().toDouble();
+    double a = ui->inputNumberEdit_4->text().toDouble(&ok);
+    double b = ui->inputNumberEdit_5->text().toDouble(&ok);
+    double gradOrRad = ui->inputNumberEdit_6->text().toDouble(&ok);
     if(a <= 0 || b <= 0 || gradOrRad <= 0) ui->ResultSide->setText("Исходные значения не могут быть меньше или равны 0.");
     else if(ui->GradSwitch->isChecked()) {
         c = qSqrt(qPow(b,2)+qPow(a,2) - 2 * b * a * qCos(gradOrRad));
