@@ -15,6 +15,17 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_commandLinkButton_clicked();
+
+    void on_commandLinkButton_2_clicked();
+
+    void on_Concatenation_clicked();
+
+    void on_Change_clicked();
+
+    void on_invertToHtml_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
