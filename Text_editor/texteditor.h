@@ -20,6 +20,8 @@ private slots:
 
     void open();
 
+    void openForRead();
+
     void save();
 
     void saveAs();
@@ -27,6 +29,12 @@ private slots:
     void exit();
 
     void about();
+
+    void onRussian();
+
+    void onEnglish();
+
+    void switchLanguage(const QString &language);
 
 private:
     Ui::TextEditor *ui;

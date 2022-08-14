@@ -18,6 +18,9 @@ HEADERS += \
 FORMS += \
     texteditor.ui
 
+TRANSLATIONS += QtLanguage_en.ts QtLanguage_ru.ts
+CODECFORSRC = UTF-8
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
