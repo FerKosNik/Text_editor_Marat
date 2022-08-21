@@ -12,7 +12,6 @@ TextEditor::TextEditor(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::TextEditor)
 {
-
     ui->setupUi(this);
     sPath = "C:/";
     dirmodel = new QFileSystemModel(this);
@@ -182,3 +181,4 @@ bool TextEditor::eventFilter(QObject *watched, QEvent *event)
 
     return QMainWindow::eventFilter(watched, event);
 }
+

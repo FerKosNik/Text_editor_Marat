@@ -9,6 +9,7 @@
 #include <QFileSystemModel>
 #include "settings.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class TextEditor; }
 QT_END_NAMESPACE
