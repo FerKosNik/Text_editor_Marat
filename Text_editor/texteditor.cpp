@@ -2,6 +2,11 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QKeyEvent>
+#include <QDockWidget>
+#include <QTreeWidget>
+#include <QPrinter>
+#include <QPrintDialog>
 
 #include "texteditor.h"
 #include "ui_texteditor.h"
@@ -10,21 +15,44 @@ TextEditor::TextEditor(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::TextEditor)
 {
+
     ui->setupUi(this);
+    sPath = "C:/";
+    dirmodel = new QFileSystemModel(this);
+    dirmodel->setRootPath(sPath);
+
     this->setCentralWidget(ui->textEdit);
+    installEventFilter(this);
+
+    QTreeView *tree = new QTreeView;
+    tree->setModel(dirmodel);
+    auto dock_wgt = new QDockWidget{"Dock widget", this};
+    dock_wgt->setWidget(tree);
+    addDockWidget(Qt::LeftDockWidgetArea, dock_wgt);
+
 
     connect(ui->actionNew, &QAction::triggered, this, &TextEditor::newDocument);
     connect(ui->actionOpen, &QAction::triggered, this, &TextEditor::open);
+    connect(ui->actionReadOnly, &QAction::triggered, this, &TextEditor::openForRead);
     connect(ui->actionSave, &QAction::triggered, this, &TextEditor::save);
     connect(ui->actionSave_as, &QAction::triggered, this, &TextEditor::saveAs);
     connect(ui->actionExit, &QAction::triggered, this, &TextEditor::exit);
     connect(ui->actionAbout, &QAction::triggered, this, &TextEditor::about);
+    connect(ui->actionSettings, &QAction::triggered, this, &TextEditor::settings);
+    connect(&parameters, &Settings::signalLang, this, &TextEditor::slotLang);
+    connect(ui->actionPrint, &QAction::triggered, this, &TextEditor::print);
 
-#if !QT_CONFIG(clipboard)
-    ui->actionCut->setEnabled(false);
-    ui->actionCopy->setEnabled(false);
-    ui->actionPaste->setEnabled(false);
-#endif
+    mdi_area_ = new QMdiArea{};
+    mdi_area_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    mdi_area_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    setCentralWidget(mdi_area_);
+
+    auto text_edit1 = new QTextEdit{};
+    mdi_area_->addSubWindow(text_edit1);
+
+    auto text_edit2 = new QTextEdit{};
+    mdi_area_->addSubWindow(text_edit2);
 }
 
 TextEditor::~TextEditor()
@@ -40,14 +68,33 @@ void TextEditor::newDocument()
 
 void TextEditor::open()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Open the file");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл"), 0, tr("Text files(*.txt)"));
     QFile file(fileName);
     currentFile = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
         return;
     }
     setWindowTitle(fileName);
+    QTextStream in(&file);
+    QString text = in.readAll();
+    ui->textEdit->setText(text);
+    file.close();
+}
+
+void TextEditor::openForRead()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл только для чтения"), 0, tr("Text files(*.txt)"));
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    ui->textEdit->setReadOnly(true);
+    ui->textEdit->clear();
+    file.open(QFile::ReadOnly | QIODevice::Text);
     QTextStream in(&file);
     QString text = in.readAll();
     ui->textEdit->setText(text);
@@ -59,14 +106,14 @@ void TextEditor::save()
     QString fileName;
     // If we don't have a filename from before, get one.
     if (currentFile.isEmpty()) {
-        fileName = QFileDialog::getSaveFileName(this, "Save");
+        fileName = QFileDialog::getSaveFileName(this, tr("Сохранить"));
         currentFile = fileName;
     } else {
         fileName = currentFile;
     }
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается сохранить файл: ") + file.errorString());
         return;
     }
     setWindowTitle(fileName);
@@ -78,11 +125,11 @@ void TextEditor::save()
 
 void TextEditor::saveAs()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Save as");
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Сохранить как"));
     QFile file(fileName);
 
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается сохранить файл: ") + file.errorString());
         return;
     }
     currentFile = fileName;
@@ -101,9 +148,71 @@ void TextEditor::exit()
 
 void TextEditor::about()
 {
-   QMessageBox::about(this, tr("About MDI"),
-                tr("The <b>Notepad</b> example demonstrates how to code a basic "
-                   "text editor using QtWidgets"));
+   QString hlp;
+   QString buttonName = ui->actionAbout->text();
+   if (buttonName == "Справка") hlp = ":/help/helpRU.txt";
+   else hlp = ":/help/helpENG.txt";
+   QFile file(hlp);
+   QString msg;
+   if (file.open(QFile::ReadOnly)) {
+       msg = file.readAll();
+       QMessageBox::about(this, tr("Справка"), msg);
+   }
+   else {
+       QMessageBox::warning(this, tr("Внимание"), tr("Отсутствует файл справки"));
+       return;
+   }
+   file.close();
 
 }
 
+void TextEditor::switchLanguage(const QString &language)
+{
+
+    translator.load(":/QtLanguage_" + language);
+    qApp->installTranslator(&translator);
+
+    ui->retranslateUi(this);
+}
+
+void TextEditor::settings()
+{
+    parameters.show();
+}
+
+void TextEditor::slotLang(const QString &language)
+{
+    switchLanguage(language);
+}
+
+bool TextEditor::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == this && event->type() == QEvent::KeyPress) {
+        auto key_event = static_cast<QKeyEvent*>(event);
+        if (key_event->key() == Qt::Key_S && key_event->modifiers() == Qt::CTRL) {
+            save();
+            return true;
+        }
+        if (key_event->key() == Qt::Key_O && key_event->modifiers() == Qt::CTRL) {
+            open();
+            return true;
+        }
+        if (key_event->key() == Qt::Key_X && key_event->modifiers() == Qt::CTRL) {
+            exit();
+            return true;
+        }
+    }
+
+    return QMainWindow::eventFilter(watched, event);
+}
+
+void TextEditor::print()
+{
+
+    QPrinter printer;
+    QPrintDialog dlg(&printer, this);
+    dlg.setWindowTitle("Print");
+    if (dlg.exec() != QDialog::Accepted)
+    return;
+
+}

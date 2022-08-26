@@ -3,9 +3,20 @@
         <file>images/info.png</file>
         <file>images/new.png</file>
         <file>images/open.png</file>
+        <file>images/readOnly.png</file>
         <file>images/save.png</file>
         <file>images/save_as.png</file>
         <file>images/exit.png</file>
         <file>images/create.png</file>
+        <file>images/Russia.png</file>
+        <file>images/English.png</file>
+        <file>images/settings.png</file>
+        <file>help/helpRU.txt</file>
+        <file>help/helpENG.txt</file>
+        <file>QtLanguage_en.qm</file>
+        <file>QtLanguage_ru.qm</file>
+        <file>styleSheets/Diffnes.qss</file>
+        <file>styleSheets/Integrid.qss</file>
+        <file>images/print.png</file>
     </qresource>
 </RCC>

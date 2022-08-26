@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,13 +10,19 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
+    settings.cpp \
     texteditor.cpp
 
 HEADERS += \
+    settings.h \
     texteditor.h
 
 FORMS += \
+    settings.ui \
     texteditor.ui
+
+TRANSLATIONS += QtLanguage_en.ts QtLanguage_ru.ts
+CODECFORSRC = UTF-8
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
