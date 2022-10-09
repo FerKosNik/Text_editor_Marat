@@ -43,7 +43,6 @@ private slots:
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 
-
 private:
     Ui::TextEditor *ui;
     QString currentFile, sPath;

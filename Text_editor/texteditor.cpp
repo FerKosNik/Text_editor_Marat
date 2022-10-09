@@ -3,8 +3,6 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QKeyEvent>
-
-
 #include "texteditor.h"
 #include "ui_texteditor.h"
 
@@ -65,6 +63,25 @@ void TextEditor::openForRead()
     currentFile = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    ui->textEdit->setReadOnly(true);
+    ui->textEdit->clear();
+    file.open(QFile::ReadOnly | QIODevice::Text);
+    QTextStream in(&file);
+    QString text = in.readAll();
+    ui->textEdit->setText(text);
+    file.close();
+}
+
+void TextEditor::openForRead()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Открыть файл только для чтения", 0, tr("Text files(*.txt)"));
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Внимание", "Не удается открыть файл: " + file.errorString());
         return;
     }
     setWindowTitle(fileName);
@@ -182,3 +199,16 @@ bool TextEditor::eventFilter(QObject *watched, QEvent *event)
     return QMainWindow::eventFilter(watched, event);
 }
 
+void TextEditor::onEnglish()
+{
+    switchLanguage("en");
+}
+
+void TextEditor::switchLanguage(const QString &language)
+{
+    QTranslator translator;
+    translator.load(":/QtLanguage_" + language);
+    qApp->installTranslator(&translator);
+
+    ui->retranslateUi(this);
+}

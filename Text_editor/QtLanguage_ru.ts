@@ -79,6 +79,7 @@
         <translation>Новый текстовый файл</translation>
     </message>
     <message>
+
         <location filename="texteditor.ui" line="86"/>
         <source>Открыть</source>
         <translation>Открыть</translation>
