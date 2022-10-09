@@ -7,8 +7,9 @@
 #include <QtGui>
 #include <QDialog>
 #include <QFileSystemModel>
+#include <QTreeWidget>
+#include <QMdiArea>
 #include "settings.h"
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class TextEditor; }
@@ -43,12 +44,15 @@ private slots:
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 
+    void print();
+
 private:
     Ui::TextEditor *ui;
     QString currentFile, sPath;
     QTranslator translator;
     Settings parameters;
     QFileSystemModel *dirmodel;
+    QMdiArea* mdi_area_{};
 public slots:
     void slotLang(const QString &language);
 };

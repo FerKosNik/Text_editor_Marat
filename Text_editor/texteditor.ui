@@ -32,7 +32,6 @@
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
-    <widget class="QTreeView" name="treeView"/>
     <widget class="QTextEdit" name="textEdit"/>
    </widget>
   </widget>
@@ -55,6 +54,8 @@
     <addaction name="actionReadOnly"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -85,8 +86,16 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionRussian"/>
-   <addaction name="actionEnglish"/>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionSave_as"/>
+   <addaction name="actionReadOnly"/>
+   <addaction name="separator"/>
+   <addaction name="actionSettings"/>
+   <addaction name="actionPrint"/>
+   <addaction name="separator"/>
+   <addaction name="actionAbout"/>
   </widget>
   <action name="actionNew">
    <property name="icon">
@@ -196,11 +205,22 @@
     <string>Параметры</string>
    </property>
   </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/print.png</normaloff>:/images/print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Печать</string>
+   </property>
+   <property name="toolTip">
+    <string>Печать</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>textEdit</tabstop>
-  <tabstop>treeView</tabstop>
  </tabstops>
  <resources>
   <include location="texteditor.qrc"/>

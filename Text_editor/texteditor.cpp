@@ -3,6 +3,10 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QKeyEvent>
+#include <QDockWidget>
+#include <QTreeWidget>
+#include <QPrinter>
+#include <QPrintDialog>
 #include "texteditor.h"
 #include "ui_texteditor.h"
 
@@ -10,13 +14,20 @@ TextEditor::TextEditor(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::TextEditor)
 {
+
     ui->setupUi(this);
     sPath = "C:/";
     dirmodel = new QFileSystemModel(this);
     dirmodel->setRootPath(sPath);
-    ui->treeView->setModel(dirmodel);
+
     this->setCentralWidget(ui->textEdit);
     installEventFilter(this);
+
+    QTreeView *tree = new QTreeView;
+    tree->setModel(dirmodel);
+    auto dock_wgt = new QDockWidget{"Dock widget", this};
+    dock_wgt->setWidget(tree);
+    addDockWidget(Qt::LeftDockWidgetArea, dock_wgt);
 
     connect(ui->actionNew, &QAction::triggered, this, &TextEditor::newDocument);
     connect(ui->actionOpen, &QAction::triggered, this, &TextEditor::open);
@@ -27,6 +38,19 @@ TextEditor::TextEditor(QWidget *parent)
     connect(ui->actionAbout, &QAction::triggered, this, &TextEditor::about);
     connect(ui->actionSettings, &QAction::triggered, this, &TextEditor::settings);
     connect(&parameters, &Settings::signalLang, this, &TextEditor::slotLang);
+    connect(ui->actionPrint, &QAction::triggered, this, &TextEditor::print);
+
+    mdi_area_ = new QMdiArea{};
+    mdi_area_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    mdi_area_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    setCentralWidget(mdi_area_);
+
+    auto text_edit1 = new QTextEdit{};
+    mdi_area_->addSubWindow(text_edit1);
+
+    auto text_edit2 = new QTextEdit{};
+    mdi_area_->addSubWindow(text_edit2);
 }
 
 TextEditor::~TextEditor()
@@ -63,25 +87,6 @@ void TextEditor::openForRead()
     currentFile = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
-        return;
-    }
-    setWindowTitle(fileName);
-    ui->textEdit->setReadOnly(true);
-    ui->textEdit->clear();
-    file.open(QFile::ReadOnly | QIODevice::Text);
-    QTextStream in(&file);
-    QString text = in.readAll();
-    ui->textEdit->setText(text);
-    file.close();
-}
-
-void TextEditor::openForRead()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, "Открыть файл только для чтения", 0, tr("Text files(*.txt)"));
-    QFile file(fileName);
-    currentFile = fileName;
-    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Внимание", "Не удается открыть файл: " + file.errorString());
         return;
     }
     setWindowTitle(fileName);
@@ -199,16 +204,12 @@ bool TextEditor::eventFilter(QObject *watched, QEvent *event)
     return QMainWindow::eventFilter(watched, event);
 }
 
-void TextEditor::onEnglish()
+void TextEditor::print()
 {
-    switchLanguage("en");
-}
 
-void TextEditor::switchLanguage(const QString &language)
-{
-    QTranslator translator;
-    translator.load(":/QtLanguage_" + language);
-    qApp->installTranslator(&translator);
-
-    ui->retranslateUi(this);
+    QPrinter printer;
+    QPrintDialog dlg(&printer, this);
+    dlg.setWindowTitle("Print");
+    if (dlg.exec() != QDialog::Accepted)
+    return;
 }
