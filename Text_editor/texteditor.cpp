@@ -7,7 +7,6 @@
 #include <QTreeWidget>
 #include <QPrinter>
 #include <QPrintDialog>
-
 #include "texteditor.h"
 #include "ui_texteditor.h"
 
@@ -29,7 +28,6 @@ TextEditor::TextEditor(QWidget *parent)
     auto dock_wgt = new QDockWidget{"Dock widget", this};
     dock_wgt->setWidget(tree);
     addDockWidget(Qt::LeftDockWidgetArea, dock_wgt);
-
 
     connect(ui->actionNew, &QAction::triggered, this, &TextEditor::newDocument);
     connect(ui->actionOpen, &QAction::triggered, this, &TextEditor::open);
@@ -214,5 +212,4 @@ void TextEditor::print()
     dlg.setWindowTitle("Print");
     if (dlg.exec() != QDialog::Accepted)
     return;
-
 }
