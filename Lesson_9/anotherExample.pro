@@ -6,7 +6,8 @@ QT += quick
 
 SOURCES += \
         main.cpp \
-        savetask.cpp
+        savetask.cpp \
+        sort.cpp
 
 RESOURCES += qml.qrc
 
@@ -22,4 +23,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    savetask.h
+    savetask.h \
+    sort.h
