@@ -36,6 +36,7 @@
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionReadOnly"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
     <addaction name="separator"/>
@@ -50,6 +51,19 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRussian"/>
+   <addaction name="actionEnglish"/>
   </widget>
   <action name="actionNew">
    <property name="icon">
@@ -133,6 +147,33 @@
    </property>
    <property name="toolTip">
     <string>Справка по текстовому редактору</string>
+   </property>
+  </action>
+  <action name="actionReadOnly">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/readOnly.png</normaloff>:/images/readOnly.png</iconset>
+   </property>
+   <property name="text">
+    <string>Открыть только для чтения</string>
+   </property>
+  </action>
+  <action name="actionRussian">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/Russia.png</normaloff>:/images/Russia.png</iconset>
+   </property>
+   <property name="text">
+    <string>Russian</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/English.png</normaloff>:/images/English.png</iconset>
+   </property>
+   <property name="text">
+    <string>English</string>
    </property>
   </action>
  </widget>
