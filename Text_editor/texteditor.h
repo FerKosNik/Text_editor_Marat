@@ -2,6 +2,13 @@
 #define TEXTEDITOR_H
 
 #include <QMainWindow>
+#include <QTranslator>
+#include <QtCore>
+#include <QtGui>
+#include <QDialog>
+#include <QFileSystemModel>
+#include "settings.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class TextEditor; }
@@ -30,14 +37,19 @@ private slots:
 
     void about();
 
-    void onRussian();
-
-    void onEnglish();
-
     void switchLanguage(const QString &language);
+
+    void settings();
+
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     Ui::TextEditor *ui;
-    QString currentFile;
+    QString currentFile, sPath;
+    QTranslator translator;
+    Settings parameters;
+    QFileSystemModel *dirmodel;
+public slots:
+    void slotLang(const QString &language);
 };
 #endif // TEXTEDITOR_H

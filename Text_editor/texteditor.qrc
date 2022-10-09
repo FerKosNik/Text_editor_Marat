@@ -10,9 +10,12 @@
         <file>images/create.png</file>
 		<file>images/Russia.png</file>
 		<file>images/English.png</file>
+		<file>images/settings.png</file>
 		<file>help/helpRU.txt</file>
 		<file>help/helpENG.txt</file>
 		<file>QtLanguage_en.qm</file>
 		<file>QtLanguage_ru.qm</file>
+		<file>styleSheets/Diffnes.qss</file>
+		<file>styleSheets/Integrid.qss</file>
     </qresource>
 </RCC>

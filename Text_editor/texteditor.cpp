@@ -2,8 +2,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QMessageBox>
-#include <QTranslator>
-
+#include <QKeyEvent>
 #include "texteditor.h"
 #include "ui_texteditor.h"
 
@@ -12,7 +11,12 @@ TextEditor::TextEditor(QWidget *parent)
     , ui(new Ui::TextEditor)
 {
     ui->setupUi(this);
+    sPath = "C:/";
+    dirmodel = new QFileSystemModel(this);
+    dirmodel->setRootPath(sPath);
+    ui->treeView->setModel(dirmodel);
     this->setCentralWidget(ui->textEdit);
+    installEventFilter(this);
 
     connect(ui->actionNew, &QAction::triggered, this, &TextEditor::newDocument);
     connect(ui->actionOpen, &QAction::triggered, this, &TextEditor::open);
@@ -21,8 +25,8 @@ TextEditor::TextEditor(QWidget *parent)
     connect(ui->actionSave_as, &QAction::triggered, this, &TextEditor::saveAs);
     connect(ui->actionExit, &QAction::triggered, this, &TextEditor::exit);
     connect(ui->actionAbout, &QAction::triggered, this, &TextEditor::about);
-    connect(ui->actionRussian, &QAction::triggered, this, &TextEditor::onRussian);
-    connect(ui->actionEnglish, &QAction::triggered, this, &TextEditor::onEnglish);
+    connect(ui->actionSettings, &QAction::triggered, this, &TextEditor::settings);
+    connect(&parameters, &Settings::signalLang, this, &TextEditor::slotLang);
 }
 
 TextEditor::~TextEditor()
@@ -38,14 +42,33 @@ void TextEditor::newDocument()
 
 void TextEditor::open()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Открыть файл", 0, tr("Text files(*.txt)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл"), 0, tr("Text files(*.txt)"));
     QFile file(fileName);
     currentFile = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Внимание", "Не удается открыть файл: " + file.errorString());
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
         return;
     }
     setWindowTitle(fileName);
+    QTextStream in(&file);
+    QString text = in.readAll();
+    ui->textEdit->setText(text);
+    file.close();
+}
+
+void TextEditor::openForRead()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл только для чтения"), 0, tr("Text files(*.txt)"));
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    ui->textEdit->setReadOnly(true);
+    ui->textEdit->clear();
+    file.open(QFile::ReadOnly | QIODevice::Text);
     QTextStream in(&file);
     QString text = in.readAll();
     ui->textEdit->setText(text);
@@ -76,14 +99,14 @@ void TextEditor::save()
     QString fileName;
     // If we don't have a filename from before, get one.
     if (currentFile.isEmpty()) {
-        fileName = QFileDialog::getSaveFileName(this, "Сохранить");
+        fileName = QFileDialog::getSaveFileName(this, tr("Сохранить"));
         currentFile = fileName;
     } else {
         fileName = currentFile;
     }
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Внимание", "Не удается сохранить файл: " + file.errorString());
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается сохранить файл: ") + file.errorString());
         return;
     }
     setWindowTitle(fileName);
@@ -95,11 +118,11 @@ void TextEditor::save()
 
 void TextEditor::saveAs()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, "Сохранить как");
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Сохранить как"));
     QFile file(fileName);
 
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Внимание", "Не удается сохранить файл: " + file.errorString());
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается сохранить файл: ") + file.errorString());
         return;
     }
     currentFile = fileName;
@@ -126,20 +149,54 @@ void TextEditor::about()
    QString msg;
    if (file.open(QFile::ReadOnly)) {
        msg = file.readAll();
-       if (buttonName == "Справка") QMessageBox::about(this, "Справка", msg);
-       else QMessageBox::about(this, "About", msg);
+       QMessageBox::about(this, tr("Справка"), msg);
    }
    else {
-       QMessageBox::warning(this, "Внимание", "Отсутствует файл справки");
+       QMessageBox::warning(this, tr("Внимание"), tr("Отсутствует файл справки"));
        return;
    }
    file.close();
 
 }
 
-void TextEditor::onRussian()
+void TextEditor::switchLanguage(const QString &language)
 {
-    switchLanguage("ru");
+
+    translator.load(":/QtLanguage_" + language);
+    qApp->installTranslator(&translator);
+
+    ui->retranslateUi(this);
+}
+
+void TextEditor::settings()
+{
+    parameters.show();
+}
+
+void TextEditor::slotLang(const QString &language)
+{
+    switchLanguage(language);
+}
+
+bool TextEditor::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == this && event->type() == QEvent::KeyPress) {
+        auto key_event = static_cast<QKeyEvent*>(event);
+        if (key_event->key() == Qt::Key_S && key_event->modifiers() == Qt::CTRL) {
+            save();
+            return true;
+        }
+        if (key_event->key() == Qt::Key_O && key_event->modifiers() == Qt::CTRL) {
+            open();
+            return true;
+        }
+        if (key_event->key() == Qt::Key_X && key_event->modifiers() == Qt::CTRL) {
+            exit();
+            return true;
+        }
+    }
+
+    return QMainWindow::eventFilter(watched, event);
 }
 
 void TextEditor::onEnglish()

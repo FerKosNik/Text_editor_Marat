@@ -10,12 +10,15 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
+    settings.cpp \
     texteditor.cpp
 
 HEADERS += \
+    settings.h \
     texteditor.h
 
 FORMS += \
+    settings.ui \
     texteditor.ui
 
 TRANSLATIONS += QtLanguage_en.ts QtLanguage_ru.ts

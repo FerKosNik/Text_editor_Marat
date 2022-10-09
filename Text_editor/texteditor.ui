@@ -13,12 +13,28 @@
   <property name="windowTitle">
    <string>TextEditor</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QTextEdit" name="textEdit"/>
-    </item>
-   </layout>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <widget class="QSplitter" name="splitter">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>761</width>
+      <height>321</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QTreeView" name="treeView"/>
+    <widget class="QTextEdit" name="textEdit"/>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -49,7 +65,14 @@
     <addaction name="actionAbout"/>
     <addaction name="separator"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Инструменты</string>
+    </property>
+    <addaction name="actionSettings"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menu"/>
    <addaction name="menuEdit"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -76,9 +99,6 @@
    <property name="toolTip">
     <string>Новый текстовый документ</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
   </action>
   <action name="actionOpen">
    <property name="icon">
@@ -90,9 +110,6 @@
    </property>
    <property name="toolTip">
     <string>Открыть файл</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSave">
@@ -106,9 +123,6 @@
    <property name="toolTip">
     <string>Сохранить файл</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
   </action>
   <action name="actionSave_as">
    <property name="icon">
@@ -120,9 +134,6 @@
    </property>
    <property name="toolTip">
     <string>Сохранить файл как</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+S</string>
    </property>
   </action>
   <action name="actionExit">
@@ -176,8 +187,21 @@
     <string>English</string>
    </property>
   </action>
+  <action name="actionSettings">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/settings.png</normaloff>:/images/settings.png</iconset>
+   </property>
+   <property name="text">
+    <string>Параметры</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>textEdit</tabstop>
+  <tabstop>treeView</tabstop>
+ </tabstops>
  <resources>
   <include location="texteditor.qrc"/>
  </resources>
