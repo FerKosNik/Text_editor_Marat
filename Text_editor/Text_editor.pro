@@ -9,13 +9,17 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    controller.cpp \
     main.cpp \
     settings.cpp \
-    texteditor.cpp
+    texteditor.cpp \
+    threadfinder.cpp
 
 HEADERS += \
+    controller.h \
     settings.h \
-    texteditor.h
+    texteditor.h \
+    threadfinder.h
 
 FORMS += \
     settings.ui \

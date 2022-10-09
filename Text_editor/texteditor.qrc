@@ -28,5 +28,6 @@
         <file>images/justify.png</file>
         <file>images/left.png</file>
         <file>images/right.png</file>
+        <file>images/datetime.png</file>
     </qresource>
 </RCC>

@@ -25,14 +25,27 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>761</width>
-      <height>321</height>
+      <width>781</width>
+      <height>291</height>
      </rect>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
     <widget class="QTextEdit" name="textEdit"/>
+   </widget>
+   <widget class="QLabel" name="labelInfo">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>310</y>
+      <width>751</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -103,6 +116,8 @@
    <addaction name="actionCenterAlign"/>
    <addaction name="actionRightAlign"/>
    <addaction name="actionJustify"/>
+   <addaction name="separator"/>
+   <addaction name="actionDateTime"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
   </widget>
@@ -308,6 +323,15 @@
    </property>
    <property name="toolTip">
     <string>Выравнивание по ширине</string>
+   </property>
+  </action>
+  <action name="actionDateTime">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/datetime.png</normaloff>:/images/datetime.png</iconset>
+   </property>
+   <property name="text">
+    <string>DateTime</string>
    </property>
   </action>
  </widget>

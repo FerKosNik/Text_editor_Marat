@@ -11,7 +11,16 @@
 #include <QTreeWidget>
 #include <QMdiArea>
 #include <QFont>
+#include <QPushButton>
+#include <QGridLayout>
+#include <QLabel>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QTreeWidget>
+#include <QDockWidget>
+
 #include "settings.h"
+#include "controller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class TextEditor; }
@@ -51,7 +60,7 @@ private slots:
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 
-    void print();
+    void printCurrentText();
 
     void currentWindow();
 
@@ -66,6 +75,8 @@ private slots:
     void rightAlign();
 
     void justifyAlign();
+
+    void addDateTime();
 private:
     Ui::TextEditor *ui;
     QString currentFile, sPath;
@@ -75,7 +86,19 @@ private:
     QMdiArea* mdi_area_{};
     QTextEdit * textEdit;
     QFont copiedFont;
+    QPushButton *startFindButton;
+    QTextEdit *infoText;
+    QComboBox *selDrive;
+    Controller *controllerl;
+    QLabel *statusLabel;
+    QLineEdit  *searchEdit;
+    QTreeView *tree;
+    QDockWidget *dock_wgt;
 public slots:
     void slotLang(const QString &language);
+private slots:
+    void findFileSlot();
+    void changStatusLabel(QString);
+    void printFindFile(QString);
 };
 #endif // TEXTEDITOR_H
