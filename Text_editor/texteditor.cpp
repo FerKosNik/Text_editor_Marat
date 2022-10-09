@@ -16,6 +16,7 @@ TextEditor::TextEditor(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::TextEditor)
 {
+
     ui->setupUi(this);
 
     mdi_area_ = new QMdiArea(this);
