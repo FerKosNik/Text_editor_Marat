@@ -95,6 +95,15 @@
    <addaction name="actionSettings"/>
    <addaction name="actionPrint"/>
    <addaction name="separator"/>
+   <addaction name="actionFont"/>
+   <addaction name="actioncopyFormat"/>
+   <addaction name="actionpasteFormat"/>
+   <addaction name="separator"/>
+   <addaction name="actionLeftAlign"/>
+   <addaction name="actionCenterAlign"/>
+   <addaction name="actionRightAlign"/>
+   <addaction name="actionJustify"/>
+   <addaction name="separator"/>
    <addaction name="actionAbout"/>
   </widget>
   <action name="actionNew">
@@ -215,6 +224,90 @@
    </property>
    <property name="toolTip">
     <string>Печать</string>
+   </property>
+  </action>
+  <action name="actionFont">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/font.png</normaloff>:/images/font.png</iconset>
+   </property>
+   <property name="text">
+    <string>Шрифт</string>
+   </property>
+   <property name="toolTip">
+    <string>Вид шрифта</string>
+   </property>
+  </action>
+  <action name="actioncopyFormat">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/copyFont.png</normaloff>:/images/copyFont.png</iconset>
+   </property>
+   <property name="text">
+    <string>copyFormat</string>
+   </property>
+   <property name="toolTip">
+    <string>Копировать формат</string>
+   </property>
+  </action>
+  <action name="actionpasteFormat">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/pasteFont.png</normaloff>:/images/pasteFont.png</iconset>
+   </property>
+   <property name="text">
+    <string>pasteFormat</string>
+   </property>
+   <property name="toolTip">
+    <string>Вставить формат</string>
+   </property>
+  </action>
+  <action name="actionLeftAlign">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/left.png</normaloff>:/images/left.png</iconset>
+   </property>
+   <property name="text">
+    <string>LeftAlign</string>
+   </property>
+   <property name="toolTip">
+    <string>Выравнивание по левому краю</string>
+   </property>
+  </action>
+  <action name="actionCenterAlign">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/center.png</normaloff>:/images/center.png</iconset>
+   </property>
+   <property name="text">
+    <string>CenterAlign</string>
+   </property>
+   <property name="toolTip">
+    <string>Выравнивание по центру</string>
+   </property>
+  </action>
+  <action name="actionRightAlign">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/right.png</normaloff>:/images/right.png</iconset>
+   </property>
+   <property name="text">
+    <string>RightAlign</string>
+   </property>
+   <property name="toolTip">
+    <string>Выравнивание по правому краю</string>
+   </property>
+  </action>
+  <action name="actionJustify">
+   <property name="icon">
+    <iconset resource="texteditor.qrc">
+     <normaloff>:/images/justify.png</normaloff>:/images/justify.png</iconset>
+   </property>
+   <property name="text">
+    <string>Justify</string>
+   </property>
+   <property name="toolTip">
+    <string>Выравнивание по ширине</string>
    </property>
   </action>
  </widget>

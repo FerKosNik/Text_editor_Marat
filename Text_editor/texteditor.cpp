@@ -1,5 +1,6 @@
 #include <QFile>
 #include <QFileDialog>
+#include <QTextEdit>
 #include <QTextStream>
 #include <QMessageBox>
 #include <QKeyEvent>
@@ -7,6 +8,8 @@
 #include <QTreeWidget>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QFontDialog>
+#include <QMdiSubWindow>
 #include "texteditor.h"
 #include "ui_texteditor.h"
 
@@ -20,14 +23,18 @@ TextEditor::TextEditor(QWidget *parent)
     dirmodel = new QFileSystemModel(this);
     dirmodel->setRootPath(sPath);
 
-    this->setCentralWidget(ui->textEdit);
-    installEventFilter(this);
+    mdi_area_ = new QMdiArea(this);
+    mdi_area_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    mdi_area_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    this->setCentralWidget(mdi_area_);
 
     QTreeView *tree = new QTreeView;
     tree->setModel(dirmodel);
     auto dock_wgt = new QDockWidget{"Dock widget", this};
     dock_wgt->setWidget(tree);
     addDockWidget(Qt::LeftDockWidgetArea, dock_wgt);
+
 
     connect(ui->actionNew, &QAction::triggered, this, &TextEditor::newDocument);
     connect(ui->actionOpen, &QAction::triggered, this, &TextEditor::open);
@@ -38,55 +45,52 @@ TextEditor::TextEditor(QWidget *parent)
     connect(ui->actionAbout, &QAction::triggered, this, &TextEditor::about);
     connect(ui->actionSettings, &QAction::triggered, this, &TextEditor::settings);
     connect(&parameters, &Settings::signalLang, this, &TextEditor::slotLang);
+    connect(ui->actionFont, &QAction::triggered, this, &TextEditor::selectFont);
     connect(ui->actionPrint, &QAction::triggered, this, &TextEditor::print);
-
-    mdi_area_ = new QMdiArea{};
-    mdi_area_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    mdi_area_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-    setCentralWidget(mdi_area_);
-
-    auto text_edit1 = new QTextEdit{};
-    mdi_area_->addSubWindow(text_edit1);
-
-    auto text_edit2 = new QTextEdit{};
-    mdi_area_->addSubWindow(text_edit2);
+    connect(ui->actioncopyFormat, &QAction::triggered, this, &TextEditor::copyFont);
+    connect(ui->actionpasteFormat, &QAction::triggered, this, &TextEditor::pasteFont);
+    connect(ui->actionLeftAlign, &QAction::triggered, this, &TextEditor::leftAlign);
+    connect(ui->actionCenterAlign, &QAction::triggered, this, &TextEditor::centerAlign);
+    connect(ui->actionRightAlign, &QAction::triggered, this, &TextEditor::rightAlign);
 }
+
 
 TextEditor::~TextEditor()
 {
     delete ui;
 }
 
+void TextEditor::currentWindow()
+{
+        QMdiArea* mdiArea = dynamic_cast<QMdiArea*>( centralWidget() );
+        if(!mdiArea) return;
+
+        QMdiSubWindow * subWindow = mdiArea->currentSubWindow();
+        if(!subWindow) return;
+
+        textEdit = dynamic_cast<QTextEdit*>(subWindow->focusWidget());
+        if(!textEdit) return;
+}
+
 void TextEditor::newDocument()
 {
-    currentFile.clear();
-    ui->textEdit->setText(QString());
+    auto text_edit1 = new QTextEdit{};
+    QString curFile = tr("document%1.txt").arg(sequenceNumber++);
+    text_edit1->setWindowTitle(curFile + "[*]");
+    QMdiSubWindow *mdiWindows = mdi_area_->addSubWindow(text_edit1);
+
+    mdiWindows->show();
 }
 
 void TextEditor::open()
 {
+    currentWindow();
     QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл"), 0, tr("Text files(*.txt)"));
     QFile file(fileName);
     currentFile = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
-        return;
-    }
-    setWindowTitle(fileName);
-    QTextStream in(&file);
-    QString text = in.readAll();
-    ui->textEdit->setText(text);
-    file.close();
-}
-
-void TextEditor::openForRead()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл только для чтения"), 0, tr("Text files(*.txt)"));
-    QFile file(fileName);
-    currentFile = fileName;
-    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
+        delete textEdit;
         return;
     }
     setWindowTitle(fileName);
@@ -95,16 +99,37 @@ void TextEditor::openForRead()
     file.open(QFile::ReadOnly | QIODevice::Text);
     QTextStream in(&file);
     QString text = in.readAll();
-    ui->textEdit->setText(text);
+    textEdit->setText(text);
+
+    file.close();
+}
+
+void TextEditor::openForRead()
+{
+    currentWindow();
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть файл только для чтения"), 0, tr("Текстовый файл(*.txt)"));
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("Внимание"), tr("Не удается открыть файл: ") + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    textEdit->setReadOnly(true);
+    textEdit->clear();
+    file.open(QFile::ReadOnly | QIODevice::Text);
+    QTextStream in(&file);
+    QString text = in.readAll();
+    textEdit->setText(text);
     file.close();
 }
 
 void TextEditor::save()
 {
+    currentWindow();
     QString fileName;
-    // If we don't have a filename from before, get one.
     if (currentFile.isEmpty()) {
-        fileName = QFileDialog::getSaveFileName(this, tr("Сохранить"));
+        fileName = QFileDialog::getSaveFileName(this, tr("Сохранить"), 0, tr("Текстовый файл(*.txt)"));
         currentFile = fileName;
     } else {
         fileName = currentFile;
@@ -112,18 +137,21 @@ void TextEditor::save()
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Внимание"), tr("Не удается сохранить файл: ") + file.errorString());
+        delete textEdit;
         return;
     }
     setWindowTitle(fileName);
     QTextStream out(&file);
-    QString text = ui->textEdit->toPlainText();
+    QString text = textEdit->toPlainText();
+
     out << text;
     file.close();
 }
 
 void TextEditor::saveAs()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Сохранить как"));
+    currentWindow();
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Сохранить как"), 0, tr("Текстовый файл(*.txt)"));
     QFile file(fileName);
 
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -133,7 +161,7 @@ void TextEditor::saveAs()
     currentFile = fileName;
     setWindowTitle(fileName);
     QTextStream out(&file);
-    QString text = ui->textEdit->toPlainText();
+    QString text = textEdit->toPlainText();
     out << text;
     file.close();
 }
@@ -178,6 +206,21 @@ void TextEditor::settings()
     parameters.show();
 }
 
+void TextEditor::selectFont()
+{
+    currentWindow();
+    QFont font = textEdit->textCursor().charFormat().font();
+    QFontDialog fntDlg(font,this);
+    bool b[] = {true};
+    font = fntDlg.getFont(b);
+    if (b[0])
+    {
+    QTextCharFormat fmt;
+    fmt.setFont(font);
+    textEdit->textCursor().setCharFormat(fmt);
+    }
+}
+
 void TextEditor::slotLang(const QString &language)
 {
     switchLanguage(language);
@@ -212,4 +255,43 @@ void TextEditor::print()
     dlg.setWindowTitle("Print");
     if (dlg.exec() != QDialog::Accepted)
     return;
+
+}
+
+void TextEditor::copyFont()
+{
+    currentWindow();
+    copiedFont = textEdit->textCursor().charFormat().font();
+}
+
+void TextEditor::pasteFont()
+{
+    currentWindow();
+    QTextCharFormat fmt;
+    fmt.setFont(copiedFont);
+    textEdit->textCursor().setCharFormat(fmt);
+}
+
+void TextEditor::leftAlign()
+{
+    currentWindow();
+    textEdit->setAlignment(Qt::AlignLeft);
+}
+
+void TextEditor::centerAlign()
+{
+    currentWindow();
+    textEdit->setAlignment(Qt::AlignCenter);
+}
+
+void TextEditor::rightAlign()
+{
+    currentWindow();
+    textEdit->setAlignment(Qt::AlignRight);
+}
+
+void TextEditor::justifyAlign()
+{
+    currentWindow();
+    textEdit->setAlignment(Qt::AlignJustify);
 }

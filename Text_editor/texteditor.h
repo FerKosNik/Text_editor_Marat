@@ -7,8 +7,10 @@
 #include <QtGui>
 #include <QDialog>
 #include <QFileSystemModel>
+#include <QTextEdit>
 #include <QTreeWidget>
 #include <QMdiArea>
+#include <QFont>
 #include "settings.h"
 
 QT_BEGIN_NAMESPACE
@@ -22,6 +24,9 @@ class TextEditor : public QMainWindow
 public:
     TextEditor(QWidget *parent = nullptr);
     ~TextEditor();
+
+    int sequenceNumber = 0;
+
 
 private slots:
     void newDocument();
@@ -42,10 +47,25 @@ private slots:
 
     void settings();
 
+    void selectFont();
+
     bool eventFilter(QObject *watched, QEvent *event) override;
 
     void print();
 
+    void currentWindow();
+
+    void copyFont();
+
+    void pasteFont();
+
+    void leftAlign();
+
+    void centerAlign();
+
+    void rightAlign();
+
+    void justifyAlign();
 private:
     Ui::TextEditor *ui;
     QString currentFile, sPath;
@@ -53,6 +73,8 @@ private:
     Settings parameters;
     QFileSystemModel *dirmodel;
     QMdiArea* mdi_area_{};
+    QTextEdit * textEdit;
+    QFont copiedFont;
 public slots:
     void slotLang(const QString &language);
 };
