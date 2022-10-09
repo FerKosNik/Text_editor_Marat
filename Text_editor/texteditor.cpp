@@ -10,7 +10,6 @@
 #include <QPrintDialog>
 #include <QFontDialog>
 #include <QMdiSubWindow>
-
 #include "texteditor.h"
 #include "ui_texteditor.h"
 
@@ -95,6 +94,9 @@ void TextEditor::open()
         return;
     }
     setWindowTitle(fileName);
+    ui->textEdit->setReadOnly(true);
+    ui->textEdit->clear();
+    file.open(QFile::ReadOnly | QIODevice::Text);
     QTextStream in(&file);
     QString text = in.readAll();
     textEdit->setText(text);
