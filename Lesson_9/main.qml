@@ -4,214 +4,238 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.1
 import QtQuick.LocalStorage 2.0
 import to.save.task 1.0
+import to.sort.task 1.0
 
 ApplicationWindow {
     id:root
     visible: true
-    width: 640
-    height: 480
-    title: qsTr("Органайзер")
+    height: 768
+    width: 1024
+    title: qsTr("Task manager")
 
-    RowLayout {
-        id: rowLayout
-        anchors.top: parent.top
-        width: 150
 
-        anchors.margins: 5
-        height: 30
 
-        spacing: 5
-        z:2
+    toolBar: ToolBar {
+        RowLayout {
+            id: rowLayout
+            anchors.top: parent.top
+            width: 150
+            x: 5
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: "white"
+            anchors.margins: 5
+            height: 30
 
-            TextInput {
-                id: textInput
+            spacing: 5
+            z:2
+
+            TextField {
+                id: taskBox
+
+                placeholderText: "Task..."
+                validator: RegExpValidator
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter
+                selectByMouse: true
+                anchors.margins: 4
+                focus: true
+                horizontalAlignment: Text.AlignHLeft
                 verticalAlignment: Text.AlignVCenter
+                KeyNavigation.tab: deadlineBox
             }
         }
-    }
-    RowLayout {
-        id: rowLayout2
-        anchors.top: parent.top
-        width: 65
-        x:160
+        RowLayout {
+            id: rowLayout2
+            anchors.top: parent.top
+            width: 100
+            x:160
 
-        anchors.margins: 5
-        height: 30
+            anchors.margins: 5
+            height: 30
 
-        spacing: 5
-        z:2
+            spacing: 5
+            z:2
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: "white"
+            TextField {
+                validator: RegExpValidator {
+                        regExp: /[0-9]{2}-[0-9]{2}-[0-9]{4}/
+                    }
+                id: deadlineBox
 
-            TextInput {
-
-                id: textInput2
+                placeholderText: "dd-mm-yyyy"
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter
+                anchors.margins: 4
+                focus: true
+                horizontalAlignment: Text.AlignHLeft
                 verticalAlignment: Text.AlignVCenter
+                KeyNavigation.tab: progressBox
             }
         }
-    }
-    RowLayout {
-        id: rowLayout3
-        anchors.top: parent.top
-        width: 65
-        x:230
+        RowLayout {
+            id: rowLayout3
+            anchors.top: parent.top
+            width: 100
+            x:270
 
-        anchors.margins: 5
-        height: 30
+            anchors.margins: 5
+            height: 30
 
-        spacing: 5
-        z:2
+            spacing: 5
+            z:2
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: "white"
+            TextField {
+                validator: RegExpValidator {
+                        regExp: /[0-9]{2}/
+                    }
+                id: progressBox
 
-            TextInput {
-
-                id: textInput3
+                placeholderText: "0 to 10..."
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter
+                anchors.margins: 4
+                focus: true
+                horizontalAlignment: Text.AlignHLeft
                 verticalAlignment: Text.AlignVCenter
+                KeyNavigation.tab: addtaskButton
             }
         }
-    }
 
-    Button {
-        anchors.left:rowLayout3.right
-        text: "Добавить задачу"
-        id:exButton
-        width: 300
-        height: 30
-        onClicked: {
-            listModel.append({ textList: textInput.text })
-            listModel2.append({ textList2: textInput2.text })
-            listModel3.append({ textList3: textInput3.text })
+        RowLayout {
+            id: rowLayout4
+            anchors.top: parent.top
+            width: 100
+            x:380
+
+            anchors.margins: 5
+            height: 30
+
+            spacing: 5
+            z:2
+            Button {
+                //anchors.left:rowLayout3.right
+                text: "Add task"
+                id:addtaskButton
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                KeyNavigation.tab: searchBox
+                onClicked: {
+                    sourceModel.append({"task": taskBox.text, "deadline": deadlineBox.text, "progress": progressBox.text})
+                }
+            }
+        }
+
+        RowLayout {
+            id: rowLayout5
+            anchors.top: parent.top
+            width: 300
+            x:485
+
+            anchors.margins: 5
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            height: 30
+
+            spacing: 5
+            z:2
+
+            TextField {
+                id: searchBox
+
+                placeholderText: "Search..."
+                inputMethodHints: Qt.ImhNoPredictiveText
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                KeyNavigation.tab: taskBox
+            }
         }
     }
 
     TableView {
+        id: tableView
+        frameVisible: false
+        sortIndicatorVisible: true
 
-        id: listView
+        anchors.fill: parent
 
-        anchors.top: rowLayout.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 5
-        z: 1
+        Layout.minimumWidth: 400
+        Layout.minimumHeight: 240
+        Layout.preferredWidth: 600
+        Layout.preferredHeight: 400
 
-        TableViewColumn
-        {
-            role: "Name_task"
-            title: "Название задачи"
+
+        TableViewColumn {
+            id: taskColumn
+            title: "Task"
+            role: "task"
+            movable: false
+            resizable: false
+            width: tableView.viewport.width - deadlineColumn.width - progressColumn.width
         }
 
-        Text
-        {
-            text: textList
+        TableViewColumn {
+            id: deadlineColumn
+            title: "Deadline"
+            role: "deadline"
+            movable: false
+            resizable: false
+            width: tableView.viewport.width / 5
         }
-        model: ListModel
-        {
-            id: listModel
-        }
-    }
-    TableView {
 
-        id: listView2
+        TableViewColumn {
+            id: progressColumn
+            title: "Progress"
+            role: "progress"
+            movable: false
+            resizable: false
+            width: tableView.viewport.width / 5
+        }
 
-        anchors.top: rowLayout.bottom
-        x:100
-        width:80
-        anchors.bottom: parent.bottom
-        anchors.margins: 5
-        z: 1
 
-        TableViewColumn
-        {
-            role: "Name_task"
-            title: "Дедлайн (в формате dd.mm.yyyy)"
-        }
-        Text
-        {
-            text: textList2
-        }
-        model: ListModel
-        {
-            id: listModel2
-        }
-    }
-    TableView {
+        model: SortFilterProxyModel {
+            id: proxyModel
+            source: sourceModel.count > 0 ? sourceModel : null
 
-        id: listView3
+            sortOrder: tableView.sortIndicatorOrder
+            sortCaseSensitivity: Qt.CaseInsensitive
+            sortRole: sourceModel.count > 0 ? tableView.getColumn(tableView.sortIndicatorColumn).role : ""
 
-        anchors.top: rowLayout.bottom
-        x:230
-        width:70
-        anchors.bottom: parent.bottom
-        anchors.margins: 5
-        z: 1
+            filterString: "*" + searchBox.text + "*"
+            filterSyntax: SortFilterProxyModel.Wildcard
+            filterCaseSensitivity: Qt.CaseInsensitive
+        }
 
-        TableViewColumn
-        {
-            role: "Name_task"
-            title: "Текущий прогресс (от 0 до 10)"
+        ListModel {
+            id: sourceModel
         }
-        Text
-        {
-            text: textList3
-        }
-        model: ListModel
-        {
-            id: listModel3
-        }
-    }
 
-    property string sc: 'ElementUser{width:600; height:150;'
-    property string nc: 'NewData{width:600; height:150;}'
-    property int num: 0
-    var taskName = textInput.text
-    var deadLine = textInput2.text
-    var curProgress = textInput3.text
-    property NewData newData: value
-    function addThisDate(taskName, deadLine, curProgress)
-    {
-        loader.writeNewInformation(taskName, deadLine, curProgress)
-        var itog = sc + 'Task:"' + taskName + '";Deadline:"' + deadLine + '";Current Progress' + curProgress
-        var el = Qt.createQmlObject(itog, list, "obj" + num++)
-    }
-    SaveTask{
-        id : loader
-        onInitEnd:
+
+        function addThisDate(taskName, deadLine, curProgress)
         {
-            if (succeed)
-            {
-                newData = Qt.createQmlObject(nc, list, "objdata")
-                loader.getNextTask()
-            } else Qt.quit()
-        }
-        onLoadTask: {
+            loader.writeNewInformation(taskName, deadLine, curProgress)
             var itog = sc + 'Task:"' + taskName + '";Deadline:"' + deadLine + '";Current Progress' + curProgress
             var el = Qt.createQmlObject(itog, list, "obj" + num++)
-                loader.getNextTask()
         }
-    }
+        SaveTask{
+            id : loader
+            onInitEnd:
+            {
+                if (succeed)
+                {
+                    newData = Qt.createQmlObject(nc, list, "objdata")
+                    loader.getNextTask()
+                } else Qt.quit()
+            }
+            onLoadTask: {
+                var itog = sc + 'Task:"' + taskName + '";Deadline:"' + deadLine + '";Current Progress' + curProgress
+                var el = Qt.createQmlObject(itog, list, "obj" + num++)
+                    loader.getNextTask()
+            }
+        }
         function add(taskName, deadLine, curProgress) {
             root.addThisDate(taskName, deadLine, curProgress)
             console.log(taskName)
             console.log(deadLine)
             console.log(curProgress)
         }
+}
 }

@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "savetask.h"
+#include "sort.h"
 
 
 int main(int argc, char *argv[])
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     qmlRegisterType<SaveTask>("to.save.task", 1, 0, "SaveTask");
+    qmlRegisterType<SortFilterProxyModel>("to.sort.task", 1, 0, "SortFilterProxyModel");
     engine.load(url);
 
     return app.exec();
