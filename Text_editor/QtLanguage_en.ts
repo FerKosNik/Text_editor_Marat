@@ -71,7 +71,7 @@
     <message>
         <location filename="texteditor.ui" line="81"/>
         <source>toolBar</source>
-        <translation type="unfinished"></translation>
+        <translation>toolBar</translation>
     </message>
     <message>
         <location filename="texteditor.ui" line="97"/>
